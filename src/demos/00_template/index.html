@@ -4,17 +4,179 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>React - Template</title>
+    <link rel="stylesheet" href="../../css/main.css">
     <script src="../../js/react.min.js"></script>
     <script src="../../js/react-dom.min.js"></script>
     <script src="../../js/browser.min.js"></script>
+
+    <link rel="stylesheet" href="../../vendors/bootstrap/bootstrap.min.css" >
+    <script src="../../vendors/bootstrap/jquery.min.js"></script>
+    <script src="../../vendors/bootstrap/bootstrap.min.js"></script>
+
 </head>
 <body>
 
     <div id="container"></div>
 
     <script type="text/babel">
+
+        /*
+        var CheckBox = React.createClass({
+
+            getInitialState: function() {
+                return{checked:true}
+            },
+
+            handleChecked: function () {
+                this.setState({checked: !this.state.checked})
+            },
+
+            render: function () {
+                var msg;
+                if(this.state.checked){
+                    msg = "Checked";
+                } else{
+                    msg = "Unchecked";
+                }
+                return(
+                    <div>
+                        <input type="checkbox" onChange={this.handleChecked} defaultChecked={this.state.checked}/>
+                        <h3>checkbox is {msg}</h3>
+
+                    </div>
+
+                );
+            }
+        });
+        */
+
+
+        var Comment = React.createClass({
+            getInitialState: function() {
+                return{editing:false}
+            },
+            edit: function () {
+                this.setState({editing:true});
+                //alert('Editing comment');
+            },
+            remove: function () {
+                console.log('Removing comment');
+                this.props.deleteCommentFromBoard(this.props.index);
+            },
+            save: function () {
+                var textFromTextArea = this.refs.newText.value; //reference to the content of the textarea.
+                console.log("new text: " + textFromTextArea);
+                this.props.updateCommentText(textFromTextArea,this.props.index);
+                this.setState({editing:false});
+            },
+            renderNormal:function () {
+                return(
+                        <div className="commentContainer">
+                            <div className="commentText">{this.props.children}</div>
+                            <button onClick={this.edit} className="btn btn-primary">Edit</button>
+                            <button onClick={this.remove} className="btn btn-alert">Remove</button>
+                        </div>
+                    );
+
+            },
+            renderForm: function () {
+                return(
+                        <div className="commentContainer">
+                            <textarea ref="newText" defaultValue={this.props.children}></textarea>
+                            <button onClick={this.save} className="btn btn-success">Save</button>
+                        </div>
+                    );
+
+            },
+            render: function () {
+                if(this.state.editing){
+                    return this.renderForm();
+                } else {
+                    return this.renderNormal();
+                }
+            }
+        });
+
+
+
+        var Board =  React.createClass({
+
+            getInitialState: function() {
+                return {
+                    'comments': [
+                        'book1',
+                        'book2',
+                        'book3'
+                    ]
+                }
+            },
+
+            removeItem: function (indexOfItemToRemove) {
+              console.log("item to remove is: " + indexOfItemToRemove);
+              var tempArr = this.state.comments;
+              tempArr.splice(indexOfItemToRemove,1);
+              this.setState({comments: tempArr});
+            },
+
+            updateItem: function (newText, indexOfItemtoUpdate) {
+                console.log("item to update " );
+                var tempArr = this.state.comments;
+                tempArr[indexOfItemtoUpdate] = newText;
+                this.setState({comments: tempArr});
+            },
+            addNewItem: function (newText) {
+                console.log("item to update " );
+                var tempArr = this.state.comments;
+                tempArr.push(newText);
+                this.setState({comments: tempArr});
+            },
+            getEachComment: function (text,i) {
+                return(
+                    <Comment key={i} index={i} updateCommentText={this.updateItem} deleteCommentFromBoard={this.removeItem}>
+                    {text}
+                    </Comment>);
+            },
+            render: function () {
+                return(
+                    <div>
+                        <div>
+                            <div className="btn btn-success" onClick={this.addNewItem.bind(null,"Click Edit to change text")}>Add New Comment</div>
+                        </div>
+                        <div className="board">
+                            {this.state.comments.map(this.getEachComment)}
+                        </div>
+                    </div>
+
+                );
+            }
+        });
+//        var Movie = React.createClass({
+//            render:function(){
+//                return(
+//                    <div>
+//                        <h1>{this.props.title}</h1>
+//                        <h2>{this.props.genre}</h2>
+//                    </div>
+//                );
+//            }
+//        });
+//
+//        var Bacon = React.createClass({
+//            render: function(){
+//                return(
+//                    <div>
+//                        <h3>This is my first component</h3>
+//                        <p>Simple part</p>
+//                    </div>
+//
+//
+//                );
+//            }
+//
+//        });
+
         ReactDOM.render(
-            <h2>Welcome to React!</h2>,
+                <Board></Board>,
             document.getElementById('container')
         );
     </script>
